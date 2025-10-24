@@ -56,6 +56,65 @@ VALUES (1,'Morrie','Conaboy','CTO',21268.94,'2005-04-30','1983-07-10',1,1,NULL,N
 (23,'Hamil','Evershed','Web Developper',3088.00,'2022-02-03','2012-03-30',1,4,2,NULL),
 (24,'Lowe','Diamant','Web Developper',6418.00,'2018-12-31','2002-09-07',1,4,2,NULL),
 (25,'Jack','Franklin','SQL Analyst',6771.00,'2013-05-18','2005-10-04',1,2,2,NULL),
-(26,'Jessica','Brown','SQL Analyst',8566.00,'2003-10-23','1965-01-29',1,1,2,NULL)
+(26,'Jessica','Brown','SQL Analyst',8566.00,'2003-10-23','1965-01-29',1,1,2,NULL);
+
+-- Task 3.2
+INSERT INTO departments (department_id,department,division)
+Values (1,'Analytics','IT'),
+(2,'Finance','Administration'),
+(3,'Sales','Sales'),
+(4,'Website','IT'),
+(5,'Back Office','Administration');
+
+-- Task 4.1 
+UPDATE employees
+SET salary = 7200 ,  position_title = 'Senior SQL Analyst'
+WHERE first_name = 'Jack' AND last_name = 'Franklin' ; 
 
 
+-- Task 4.2 
+UPDATE employees 
+SET position_title = 'Customer Specialist'
+WHERE position_title = 'Customer Support';
+
+
+
+-- Task 4.3 
+UPDATE employees 
+SET salary = salary+(salary*0.06)
+WHERE position_title = 'SQL Analyst';
+
+-- Task 4.4
+SELECT AVG(salary)
+FROM employees
+Where position_title = 'SQL Analyst';
+
+--5.1 
+SELECT emp_id , first_name ||' '||last_name As full_name , position_title,salary,start_date,birth_date,store_id,department_id,manager_id,end_date,
+CASE WHEN end_date is Null then TRUE ELSE
+False END AS is_active
+FROM employees;
+
+--5.2
+
+CREATE VIEW v_employee AS 
+SELECT emp_id , first_name ||' '||last_name As full_name , position_title,salary,start_date,birth_date,store_id,department_id,manager_id,end_date,
+CASE WHEN end_date is Null then TRUE ELSE
+False END AS is_active
+FROM employees;
+
+--6  
+
+SELECT position_title , AVG(salary)
+FROM employees 
+GROUP BY position_title;
+
+
+--7 
+SELECT d.division , ROUND(AVG(e.salary),2) AS average_devision
+FROM employees e
+LEFT JOIN departments d
+on e.department_id = d.department_id
+GROUP BY d.division;
+
+--8
