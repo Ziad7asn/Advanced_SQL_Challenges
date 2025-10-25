@@ -118,3 +118,24 @@ on e.department_id = d.department_id
 GROUP BY d.division;
 
 --8
+SELECT emp_id,
+	first_name,
+	last_name,
+	position_title,
+	salary,
+	AVG(salary) OVER(ORDER BY emp_id)
+FROM Employees
+
+-- 8.2
+SELECT COUNT(*)
+FROM (SELECT emp_id,
+	first_name,
+	last_name,
+	position_title,
+	salary,
+	AVG(salary) OVER(Partition by position_title) as avg_pos_salary
+FROM Employees) AS sub
+WHERE salary < 	avg_pos_salary ;
+
+--9
+
