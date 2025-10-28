@@ -124,7 +124,7 @@ SELECT emp_id,
 	position_title,
 	salary,
 	AVG(salary) OVER(ORDER BY emp_id)
-FROM Employees
+FROM Employees;
 
 -- 8.2
 SELECT COUNT(*)
@@ -138,4 +138,12 @@ FROM Employees) AS sub
 WHERE salary < 	avg_pos_salary ;
 
 --9
+SELECT emp_id,
+		salary,
+		start_date,
+		sum(salary) over(ORDER BY start_date) as running_total_of_salary
+FROM employees
+--10
 
+		
+  
