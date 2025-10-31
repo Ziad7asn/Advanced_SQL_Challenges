@@ -20,7 +20,7 @@
 **Ziad Ehab**  
 Data Analyst | Business Intelligence | SQL & Python Enthusiast  
 📍 Egypt  
-🔗 [Portfolio Website](#) | [LinkedIn](#)
+🔗  [LinkedIn](https://www.linkedin.com/in/ziadehab/)
 
 ---
 
