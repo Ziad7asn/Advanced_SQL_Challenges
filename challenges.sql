@@ -1,12 +1,12 @@
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS departments;
-
+-- task 1.1
 CREATE TABLE employees (
-emp_id INTEGER PRIMARY KEY,
+emp_id SERIAL PRIMARY KEY,
 first_name VARCHAR(50) NOT NULL,
 last_name VARCHAR(50) NOT NULL,
 job_position VARCHAR(50) NOT NULL,
-salary NUMERIC(8,2),
+salary decimal(8,2),
 start_date DATE NOT NULL,
 birth_date DATE NOT NULL,
 store_id INTEGER,
@@ -14,12 +14,15 @@ department_id INTEGER,
 manager_id INTEGER
 );
 
+--1.2
+
 CREATE TABLE departments (
-department_id INTEGER PRIMARY KEY,
+department_id SERIAL PRIMARY KEY,
 department VARCHAR(50) NOT NULL,
 division VARCHAR(50) NOT NULL
 
 );
+-- task 2
 
 ALTER TABLE  employees
 ALTER COLUMN department_id SET NOT NULL,
@@ -29,6 +32,7 @@ ADD CONSTRAINT ck_birth_date_validation CHECK (birth_date < CURRENT_DATE);
 ALTER TABLE employees
 RENAME COLUMN job_position to position_title;
 
+--3.1
 
 INSERT INTO employees (emp_id,first_name,last_name,position_title,salary,start_date,birth_date,store_id,department_id,manager_id,end_date)
 VALUES (1,'Morrie','Conaboy','CTO',21268.94,'2005-04-30','1983-07-10',1,1,NULL,NULL),
@@ -81,8 +85,8 @@ WHERE position_title = 'Customer Support';
 
 -- Task 4.3 
 UPDATE employees 
-SET salary = salary+(salary*0.06)
-WHERE position_title = 'SQL Analyst';
+SET salary = salary*1.06
+WHERE position_title = '%SQL Analyst';
 
 -- Task 4.4
 SELECT AVG(salary)
@@ -116,14 +120,14 @@ FROM employees e
 LEFT JOIN departments d
 on e.department_id = d.department_id
 GROUP BY d.division;
-
+ORDER BY 2
 --8
 SELECT emp_id,
 	first_name,
 	last_name,
 	position_title,
 	salary,
-	AVG(salary) OVER(ORDER BY emp_id)
+	AVG(salary) OVER(PARTITION BY position_title) as avg_position_sal 
 FROM Employees;
 
 -- 8.2
@@ -142,8 +146,63 @@ SELECT emp_id,
 		salary,
 		start_date,
 		sum(salary) over(ORDER BY start_date) as running_total_of_salary
+FROM employees;
+--10 -->
+SELECT 
+start_date,
+SUM(salary) OVER(ORDER BY start_date)
+FROM (
+SELECT 
+emp_id,
+salary,
+start_date
 FROM employees
---10
+UNION 
+SELECT 
+emp_id,
+-salary,
+end_date
+FROM v_employees_info
+WHERE is_active ='false'
+ORDER BY start_date) a 
 
-		
-  
+--11.1
+SELECT first_name , position_title, salary
+FROM employees
+ORDER BY 3 DESC;
+
+--11.2 
+
+SELECT *
+FROM (
+SELECT first_name , position_title, salary , AVG(salary) OVER(PARTITION BY position_title) as avg_pos
+FROM employees
+ORDER BY 3 DESC
+) as sub 
+WHERE salary <> avg_pos;
+
+
+-- 12
+
+SELECT division, department, position_title, SUM(e.salary) , count(*),avg(salary)
+FROM employees e
+LEFT JOIN departments d
+on e.department_id = d.department_id
+GROUP BY ROLLUP (division, department, position_title)
+ORDER BY 1;
+
+--13
+
+
+SELECT emp_id,position_title,department,salary,rank() OVER(PARTITION BY department ORDER BY salary DESC)
+FROM employees e
+LEFT JOIN departments d
+on e.department_id = d.department_id;
+--14
+SELECT *
+FROM (SELECT emp_id,position_title,department,salary,rank() OVER(PARTITION BY department ORDER BY salary DESC) as rnk
+FROM employees e
+LEFT JOIN departments d
+on e.department_id = d.department_id) as sub
+WHERE rnk = 1;
+
